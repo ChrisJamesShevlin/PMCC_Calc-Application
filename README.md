@@ -113,10 +113,5 @@ Contributions, bug reports, and feature requests are welcome! Please feel free t
 
 ---
 
-## Contact
-
-For questions or feedback, reach out to **[Your Name]** at [your-email@example.com].
-
----
 
 Let me know if you need adjustments or additional sections!
