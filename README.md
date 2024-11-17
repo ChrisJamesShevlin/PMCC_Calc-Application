@@ -94,8 +94,8 @@ These values are dynamically calculated based on the inputs provided.
 
 ## Screenshots
 
-### Input Fields and Results
-![Screenshot](diagonal_spread_calculator_screenshot.png)
+![image](https://github.com/user-attachments/assets/a1c72118-809c-47ba-bf87-1cb83154a774)
+
 
 ---
 
