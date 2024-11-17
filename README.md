@@ -1,6 +1,4 @@
-Here’s a **GitHub README** for your project, written in Markdown format:
 
----
 
 # Diagonal Spread Calculator
 
@@ -106,12 +104,6 @@ These values are dynamically calculated based on the inputs provided.
 - Add support for other option strategies.
 - Include a real-time price feed integration.
 - Save calculation history for further analysis.
-
----
-
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
