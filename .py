@@ -1,56 +1,93 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import ttk
 
-# Function to calculate max risk and max profit
-def calculate():
+def calculate_stake():
     try:
-        # Get user inputs
-        long_strike = float(long_strike_entry.get())
-        short_strike = float(short_strike_entry.get())
-        premium_paid = float(premium_paid_entry.get())
-        premium_received = float(premium_received_entry.get())
+        # Get input values
+        etf1_price = float(etf1_entry.get())
+        etf2_price = float(etf2_entry.get())
+        etf2_stake = float(min_stake_entry.get())
+        account_balance = float(account_balance_entry.get())
+        etf1_margin = float(etf1_margin_entry.get())
+        etf2_margin = float(etf2_margin_entry.get())
         
-        # Calculate max risk and max profit
-        net_debit = premium_paid - premium_received
-        max_risk = net_debit
-        max_profit = (short_strike - long_strike) - net_debit
+        # Calculate the required stake per point for ETF1 to balance monetary exposure
+        etf1_stake = round(etf2_stake * (etf2_price / etf1_price), 2)
         
-        # Display results
-        result_text.set(f"Maximum Risk: £{max_risk:.2f}\nMaximum Profit: £{max_profit:.2f}")
+        # Calculate new ETF sizes using 25% of margin
+        total_margin = etf1_margin + etf2_margin
+        available_margin = account_balance * 0.25
+        scaling_factor = available_margin / total_margin
+        new_etf1_size = round(etf1_stake * scaling_factor, 2)
+        new_etf2_size = round(etf2_stake * scaling_factor, 2)
+        
+        # Display the results
+        result_label.config(
+            text=f"To balance:\n"
+                 f"ETF1 stake per point = £{etf1_stake}\n"
+                 f"ETF2 stake per point = £{etf2_stake}\n\n"
+                 f"With 25% margin:\n"
+                 f"New ETF1 size = £{new_etf1_size}\n"
+                 f"New ETF2 size = £{new_etf2_size}"
+        )
     except ValueError:
-        messagebox.showerror("Input Error", "Please enter valid numbers.")
+        result_label.config(text="Please enter valid numeric values.")
 
-# Create the main window
+# Set up main window
 root = tk.Tk()
-root.title("Diagonal Spread Calculator")
-root.geometry("400x300")
-root.configure(bg="#1e1e2e")
+root.title("Spread Bet Pairs Trade Calculator")
+root.geometry("500x500")
 
-# Result display variable
-result_text = tk.StringVar()
+# Set dark theme with bright blue text
+root.configure(bg='#1e1e1e')
+style = ttk.Style()
+style.theme_use('clam')
+style.configure("TLabel", foreground="#00bfff", background="#1e1e1e")
+style.configure("TButton", foreground="#00bfff", background="#3e3e3e")
+style.configure("TEntry", foreground="#00bfff", background="#1e1e1e", fieldbackground="#3e3e3e")
 
-# Create and place widgets
-tk.Label(root, text="Long Call Strike", bg="#1e1e2e", fg="white").grid(row=0, column=0, pady=5, padx=10, sticky="w")
-long_strike_entry = tk.Entry(root, width=20)
-long_strike_entry.grid(row=0, column=1, pady=5, padx=10)
+# Input labels and entries
+etf1_label = ttk.Label(root, text="ETF1 Price per Share:")
+etf1_label.grid(row=0, column=0, padx=10, pady=5, sticky="e")
+etf1_entry = ttk.Entry(root)
+etf1_entry.grid(row=0, column=1, padx=10, pady=5)
 
-tk.Label(root, text="Short Call Strike", bg="#1e1e2e", fg="white").grid(row=1, column=0, pady=5, padx=10, sticky="w")
-short_strike_entry = tk.Entry(root, width=20)
-short_strike_entry.grid(row=1, column=1, pady=5, padx=10)
+etf2_label = ttk.Label(root, text="ETF2 Price per Share:")
+etf2_label.grid(row=1, column=0, padx=10, pady=5, sticky="e")
+etf2_entry = ttk.Entry(root)
+etf2_entry.grid(row=1, column=1, padx=10, pady=5)
 
-tk.Label(root, text="Premium Paid (£)", bg="#1e1e2e", fg="white").grid(row=2, column=0, pady=5, padx=10, sticky="w")
-premium_paid_entry = tk.Entry(root, width=20)
-premium_paid_entry.grid(row=2, column=1, pady=5, padx=10)
+min_stake_label = ttk.Label(root, text="Minimum Stake for ETF2 (£):")
+min_stake_label.grid(row=2, column=0, padx=10, pady=5, sticky="e")
+min_stake_entry = ttk.Entry(root)
+min_stake_entry.insert(0, "1")  # Default value of 1
+min_stake_entry.grid(row=2, column=1, padx=10, pady=5)
 
-tk.Label(root, text="Premium Received (£)", bg="#1e1e2e", fg="white").grid(row=3, column=0, pady=5, padx=10, sticky="w")
-premium_received_entry = tk.Entry(root, width=20)
-premium_received_entry.grid(row=3, column=1, pady=5, padx=10)
+account_balance_label = ttk.Label(root, text="Account Balance (£):")
+account_balance_label.grid(row=3, column=0, padx=10, pady=5, sticky="e")
+account_balance_entry = ttk.Entry(root)
+account_balance_entry.grid(row=3, column=1, padx=10, pady=5)
 
-calculate_button = tk.Button(root, text="Calculate", command=calculate, bg="#007acc", fg="white")
-calculate_button.grid(row=4, column=0, columnspan=2, pady=20)
+etf1_margin_label = ttk.Label(root, text="ETF1 Margin Requirement (£):")
+etf1_margin_label.grid(row=4, column=0, padx=10, pady=5, sticky="e")
+etf1_margin_entry = ttk.Entry(root)
+etf1_margin_entry.grid(row=4, column=1, padx=10, pady=5)
 
-result_label = tk.Label(root, textvariable=result_text, bg="#1e1e2e", fg="white", font=("Helvetica", 12))
-result_label.grid(row=5, column=0, columnspan=2, pady=10)
+etf2_margin_label = ttk.Label(root, text="ETF2 Margin Requirement (£):")
+etf2_margin_label.grid(row=5, column=0, padx=10, pady=5, sticky="e")
+etf2_margin_entry = ttk.Entry(root)
+etf2_margin_entry.grid(row=5, column=1, padx=10, pady=5)
+
+# Calculate button
+calculate_button = ttk.Button(root, text="Calculate", command=calculate_stake)
+calculate_button.grid(row=6, column=0, columnspan=2, pady=20)
+
+# Result display
+result_label = ttk.Label(root, text="", font=("Arial", 12))
+result_label.grid(row=7, column=0, columnspan=2)
+
+# Center the window
+root.eval('tk::PlaceWindow . center')
 
 # Run the application
 root.mainloop()
